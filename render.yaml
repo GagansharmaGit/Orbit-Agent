@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: orbit-app
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false # Requires manually setting in Render Dashboard
+      - key: GOOGLE_CLIENT_ID
+        sync: false # Requires manually setting in Render Dashboard
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false # Requires manually setting in Render Dashboard
+      - key: GOOGLE_GENERATIVE_AI_API_KEY
+        sync: false # Requires manually setting in Render Dashboard
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: AUTH_TRUST_HOST
+        value: "true"
+      - key: NEXT_PUBLIC_APP_URL
+        value: "https://orbit-app.onrender.com"
+      - key: NEXTAUTH_URL
+        value: "https://orbit-app.onrender.com"
