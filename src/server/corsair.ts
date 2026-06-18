@@ -79,7 +79,7 @@ export async function syncCorsairTokens(session: any) {
       }
       await tenantSyncPromises.get(tenantId);
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error("[Corsair Sync Error]:", err);
     // Reset promises so it can try again on the next request if it failed
     globalSyncPromise = null;
