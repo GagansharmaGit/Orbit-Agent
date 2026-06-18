@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orbit - AI Powered Personal Assistant
+
+Orbit is an intelligent, secure, and unified personal assistant built to streamline your daily workflow. Powered by Next.js, OpenAI, and the Model Context Protocol (MCP), Orbit securely connects to your Gmail and Google Calendar. It allows you to read, draft, send emails, and manage your schedule seamlessly—all through an intuitive chat interface.
+
+![Orbit App](https://orbit-app-9y4r.onrender.com/icon.jpg)
+
+## Features
+
+- **Unified Dashboard**: View your upcoming events and recent emails in a single glance.
+- **AI Agent Interface**: Chat naturally with your assistant to manage your schedule. Ask it to "Send an email to John about our meeting tomorrow" or "What does my schedule look like today?".
+- **Deep Integrations**: Fully integrated with Google Calendar and Gmail APIs via the Corsair MCP tool.
+- **Semantic Routing Guardrails**: Built-in security to ensure the AI remains focused strictly on email and calendar management, preventing prompt injections or unauthorized tasks.
+- **Multi-tenant Architecture**: Secure data separation ensuring users can only access their own integrated accounts.
+
+## Tech Stack
+
+- **Frontend**: Next.js 16 (App Router), React 19, Tailwind CSS v4, shadcn/ui
+- **Backend**: Next.js Server Actions & API Routes, tRPC
+- **Database**: PostgreSQL (Neon Serverless), Drizzle ORM
+- **AI / LLM**: Vercel AI SDK, OpenAI (gpt-4o-mini)
+- **Integrations**: Corsair MCP (`@corsair-dev/gmail`, `@corsair-dev/googlecalendar`)
+- **Authentication**: Auth.js (NextAuth), OAuth 2.0
+- **Deployment**: Render
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
+You will need the following environment variables set up in your `.env` file:
+
+\`\`\`env
+# Database
+DATABASE_URL="postgresql://user:password@host/db"
+
+# Authentication
+AUTH_SECRET="your_auth_secret"
+GOOGLE_CLIENT_ID="your_google_oauth_client_id"
+GOOGLE_CLIENT_SECRET="your_google_oauth_client_secret"
+
+# Corsair Integrations
+CORSAIR_KEK="your_32_byte_base64_encryption_key"
+
+# AI
+OPENAI_API_KEY="your_openai_api_key"
+\`\`\`
+
+### Installation
+
+1. Clone the repository:
+\`\`\`bash
+git clone https://github.com/GagansharmaGit/Orbit-Agent.git
+cd orbit
+\`\`\`
+
+2. Install dependencies:
+\`\`\`bash
+npm install
+\`\`\`
+
+3. Push the database schema:
+\`\`\`bash
+npm run db:push
+\`\`\`
+
+4. Start the development server:
+\`\`\`bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Orbit leverages the **Model Context Protocol (MCP)** to provide secure, structured access to external APIs for the LLM. Rather than manually writing rigid API wrapper functions, Orbit uses Corsair's MCP SDK to dynamically inject Gmail and Google Calendar tools directly into the Vercel AI SDK. This allows the AI to autonomously determine the best API endpoints (like `messages.send` or `events.getMany`) based on the user's natural language request.
