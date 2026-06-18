@@ -2,7 +2,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
-import { corsair } from "@/server/corsair";
+import { corsair, syncCorsairTokens } from "@/server/corsair";
 
 export const createTRPCContext = async () => {
   const session = await auth();
@@ -30,6 +30,10 @@ const enforceAuth = t.middleware(async ({ ctx, next }) => {
   if (!ctx.session?.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+  
+  // Ensure Corsair tokens are synced for this session
+  await syncCorsairTokens(ctx.session);
+
   return next({
     ctx: {
       ...ctx,

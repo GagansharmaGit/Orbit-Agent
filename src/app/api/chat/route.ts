@@ -3,7 +3,7 @@ import { streamText, tool, stepCountIs, type ModelMessage, type ToolSet, createU
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { chatMessages } from "@/server/db/schema";
-import { corsair } from "@/server/corsair";
+import { corsair, syncCorsairTokens } from "@/server/corsair";
 import { buildCorsairToolDefs } from "@corsair-dev/mcp";
 import { z } from "zod";
 
@@ -226,47 +226,9 @@ Analyze the user's prompt and classify their intent:
   }
 
   // Ensure the integration and account tables are initialized for this tenant
+  await syncCorsairTokens(session);
   const tenantId = session.user.id as string;
-  try {
-    const { ensureTenantCorsairAccount } = await import("@/server/corsair");
-    await ensureTenantCorsairAccount(tenantId);
-  } catch (err) {
-    console.error("[Corsair Bootstrap Error]:", err);
-  }
-
   const tenantCorsair = corsair.withTenant(tenantId);
-
-  try {
-    const globalCorsairAny = corsair as any;
-    const tenantCorsairAny = tenantCorsair as any;
-
-    // Read current integration credentials
-    const currentClientId = await globalCorsairAny.keys.googlecalendar.get_client_id();
-    const currentClientSecret = await globalCorsairAny.keys.googlecalendar.get_client_secret();
-
-    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== currentClientId) {
-      await globalCorsairAny.keys.googlecalendar.set_client_id(process.env.GOOGLE_CLIENT_ID);
-      await globalCorsairAny.keys.gmail.set_client_id(process.env.GOOGLE_CLIENT_ID);
-    }
-    if (process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CLIENT_SECRET !== currentClientSecret) {
-      await globalCorsairAny.keys.googlecalendar.set_client_secret(process.env.GOOGLE_CLIENT_SECRET);
-      await globalCorsairAny.keys.gmail.set_client_secret(process.env.GOOGLE_CLIENT_SECRET);
-    }
-
-    // Read current account credentials
-    const currentRefreshToken = await tenantCorsairAny.googlecalendar.keys.get_refresh_token();
-
-    if (session.refreshToken && session.refreshToken !== currentRefreshToken) {
-      await tenantCorsairAny.googlecalendar.keys.set_refresh_token(session.refreshToken);
-      await tenantCorsairAny.gmail.keys.set_refresh_token(session.refreshToken);
-      if (session.accessToken) {
-        await tenantCorsairAny.googlecalendar.keys.set_access_token(session.accessToken);
-        await tenantCorsairAny.gmail.keys.set_access_token(session.accessToken);
-      }
-    }
-  } catch (err) {
-    console.error("[Corsair Sync Error]:", err);
-  }
   
   // Use Corsair's official MCP tools mapping for Vercel AI SDK
   const corsairMcpDefs = buildCorsairToolDefs({ corsair: tenantCorsair });
