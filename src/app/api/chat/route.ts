@@ -338,8 +338,27 @@ You can help users:
     });
     return updatedEvent;
     \`\`\`
-- Search through emails
 - Manage their schedule
+- Send and reply to emails. When sending any type of email:
+  * ALWAYS use the path \`corsair.gmail.api.messages.send\`. NEVER hallucinate \`corsair.google.api...\`
+  * You MUST construct the raw email string in RFC 2822 format (headers, two newlines, body).
+  * You MUST encode the raw string to base64url using Node's Buffer: \`Buffer.from(emailString).toString('base64url')\`. Do NOT use \`btoa\`.
+  Example template to write for run_script to send any email:
+  \`\`\`javascript
+  const emailString = \`From: me
+To: \${recipientEmail}
+Subject: \${dynamicSubject}
+
+\${dynamicBodyContent}\`;
+
+  const result = await corsair.gmail.api.messages.send({
+    userId: "me",
+    resource: {
+      raw: Buffer.from(emailString).toString('base64url')
+    }
+  });
+  return result;
+  \`\`\`
 
 Current date/time: ${new Date().toISOString()}
 User: ${session.user.name || session.user.email}`,
