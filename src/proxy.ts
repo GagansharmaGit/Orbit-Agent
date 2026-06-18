@@ -44,7 +44,7 @@ export async function proxy(req: NextRequest) {
   // Authentication logic
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
   
-  if (!token && req.nextUrl.pathname !== "/login" && req.nextUrl.pathname !== "/") {
+  if (!token && req.nextUrl.pathname !== "/login" && req.nextUrl.pathname !== "/" && !req.nextUrl.pathname.startsWith('/api/auth')) {
     // Return 401 for API routes instead of redirecting
     if (req.nextUrl.pathname.startsWith('/api')) {
       return new NextResponse("Unauthorized", { status: 401 });
