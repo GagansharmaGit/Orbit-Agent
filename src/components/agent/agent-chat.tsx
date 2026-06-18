@@ -57,7 +57,7 @@ export function AgentChat() {
     });
   }, [allHistoryMessages, selectedDate]);
 
-  const { messages, sendMessage, status, setMessages } = useChat({
+  const { messages, append, status, setMessages } = useChat({
     messages: initialMessages as any,
     id: selectedDate.getTime().toString(),
   });
@@ -84,10 +84,10 @@ export function AgentChat() {
       setSelectedDate(startOfDay(new Date()));
       // Allow react to update the state so useChat resets context to today
       setTimeout(() => {
-        sendMessage({ text: input });
+        append({ role: "user", content: input });
       }, 0);
     } else {
-      sendMessage({ text: input });
+      append({ role: "user", content: input });
     }
     setInput("");
   };

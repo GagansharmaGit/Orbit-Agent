@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import {
   Inbox,
   Calendar,
@@ -16,7 +16,8 @@ import {
   AlertOctagon,
   Trash2,
   ChevronLeft,
-  LayoutDashboard
+  LayoutDashboard,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore, type MailFolder } from "@/stores/app-store";
@@ -149,19 +150,21 @@ export function Sidebar() {
 
       {/* Profile Section (Bottom) */}
       <div className="p-4 border-t border-border/30">
-        <button className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-white/5 transition-colors group">
+        <button 
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-white/5 transition-colors group"
+          title="Sign out"
+        >
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-[#11b981] flex items-center justify-center text-sm font-semibold text-white">
               {initial}
             </div>
             <div className="text-left">
-              <p className="text-[14px] font-medium text-foreground/90 leading-tight">{user?.name || "Gagan Sharma"}</p>
+              <p className="text-[14px] font-medium text-foreground/90 leading-tight truncate max-w-[120px]">{user?.name || "Gagan Sharma"}</p>
               <p className="text-[11px] text-muted-foreground truncate max-w-[120px]">{user?.email || "gagan.brainalive@gmail.com"}</p>
             </div>
           </div>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-muted-foreground group-hover:text-foreground">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+          <LogOut className="w-4 h-4 text-muted-foreground group-hover:text-red-400 transition-colors" />
         </button>
       </div>
     </aside>
