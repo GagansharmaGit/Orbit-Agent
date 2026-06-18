@@ -353,9 +353,7 @@ Subject: \${dynamicSubject}
 
   const result = await corsair.gmail.api.messages.send({
     userId: "me",
-    resource: {
-      raw: Buffer.from(emailString).toString('base64url')
-    }
+    raw: Buffer.from(emailString).toString('base64url')
   });
   return result;
   \`\`\`
