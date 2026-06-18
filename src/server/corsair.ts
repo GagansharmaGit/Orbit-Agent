@@ -34,6 +34,9 @@ export async function syncCorsairTokens(session: any) {
   try {
     const globalCorsairAny = corsair as any;
     if (!globalKeysSynced) {
+      // Ensure global integrations exist in the database first
+      await setupCorsair(corsair);
+      
       const currentClientId = await globalCorsairAny.keys.googlecalendar.get_client_id().catch(() => null);
       if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== currentClientId) {
         await globalCorsairAny.keys.googlecalendar.set_client_id(process.env.GOOGLE_CLIENT_ID);
