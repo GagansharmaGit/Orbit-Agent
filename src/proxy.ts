@@ -41,8 +41,8 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  // Authentication logic
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  const isSecure = process.env.NODE_ENV === "production" || req.headers.get("x-forwarded-proto") === "https";
+  const token = await getToken({ req, secret: process.env.AUTH_SECRET, secureCookie: isSecure });
   
   if (!token && req.nextUrl.pathname !== "/login" && req.nextUrl.pathname !== "/" && !req.nextUrl.pathname.startsWith('/api/auth')) {
     // Return 401 for API routes instead of redirecting
