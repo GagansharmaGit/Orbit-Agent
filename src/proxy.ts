@@ -20,7 +20,7 @@ const ratelimit = (redisUrl && redisToken) ? new Ratelimit({
 export async function proxy(req: NextRequest) {
   // Rate limiting logic
   if (ratelimit) {
-    const ip = req.ip ?? req.headers.get("x-forwarded-for") ?? "127.0.0.1";
+    const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
     try {
       const { success, limit, reset, remaining } = await ratelimit.limit(`ratelimit_${ip}`);
       

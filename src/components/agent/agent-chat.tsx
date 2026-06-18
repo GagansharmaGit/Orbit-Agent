@@ -28,7 +28,7 @@ export function AgentChat() {
       role: msg.role as "system" | "user" | "assistant" | "data",
       content: msg.content,
       createdAt: msg.createdAt,
-    }));
+    } as any));
   }, [history]);
 
   const historyDays = useMemo(() => {
@@ -58,7 +58,7 @@ export function AgentChat() {
   }, [allHistoryMessages, selectedDate]);
 
   const { messages, sendMessage, status, setMessages } = useChat({
-    initialMessages,
+    messages: initialMessages as any,
     id: selectedDate.getTime().toString(),
   });
 

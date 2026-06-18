@@ -388,7 +388,7 @@ User: ${session.user.name || session.user.email}`,
       console.log("===================");
       try {
         await db.insert(chatMessages).values({
-          userId: session.user.id,
+          userId: session.user.id!,
           role: "assistant",
           content: text || "",
           toolCalls: toolCalls && toolCalls.length > 0 ? JSON.stringify(toolCalls) : null
